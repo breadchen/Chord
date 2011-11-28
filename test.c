@@ -6,30 +6,39 @@
 
 void main()
 {
-	struct sockaddr_in ip;
 	unsigned char ibuf[1024];
 	struct key obuf;
+	struct key add_in;
+	struct key random;
+	int exponent = 0;
 	//SHA_CTX content;
-	int i;
 
-	ip.sin_family = AF_INET;
-	ip.sin_port = 8000;
+	obuf.addr.sin_family = AF_INET;
+	obuf.addr.sin_port = 8000;
 
 	scanf("%s", ibuf);
-	inet_aton(ibuf, (struct in_addr*)&ip.sin_addr);
+	inet_aton(ibuf, (struct in_addr*)&obuf.addr.sin_addr);
 
 	//SHA1_Init(&content);
 	//SHA1_Update(&content, ibuf, strlen(ibuf));
 	//SHA1_Final(obuf, &content);
-	key_generate_by_addr(ip, &obuf);
-
-	for (i = 0; i < 20; i++)
-		printf("%02x", obuf.id[i]);
-	printf("\n");
+	key_generate_by_addr(obuf.addr, &obuf);
+	key_print(&obuf);
 
 	key_generate_random(&obuf);
+	key_print(&obuf);
 
-	for (i = 0; i < 20; i++)
-		printf("%02x", obuf.id[i]);
-	printf("\n");
+	scanf("\n%d", &exponent);
+	key_generate_power(exponent, &add_in);
+	key_print(&add_in);
+
+	key_add(&obuf, &add_in);
+	key_print(&obuf);
+
+	key_generate_random(&random);
+	key_print(&random);
+	if (key_is_between(&add_in, &obuf, &random, 0,0))
+		printf("in\n");
+	else
+		printf("not in\n");
 }
