@@ -2,6 +2,7 @@
 #define _KEY_H
 
 #include "identifier.h"
+#include <arpa/inet.h>
 
 struct key
 {

@@ -1,21 +1,18 @@
 #ifndef _NODE_H
 #define _NODE_H
 
-#include "key.h"
+#include "node_struct.h"
 
-struct options;
-struct finger;
+struct node* node_new_local(const struct key* node_key);
 
-struct node
-{
-	struct key node_key;
-	struct finger* finger_table;
-	struct options ops;
-};
+void node_free(struct node* n);
 
-struct finger
-{
-	Identifier start;	
-}
+int node_join(struct node* node_fresh, const struct node* node_exist);
+
+int node_exit(struct node* n);
+
+int node_send(struct node* node_sender, struct node* node_dst, char* data, int len);
+
+int node_receive(struct node* node_receiver, struct node* node_from, char* buf, int len);
 
 #endif
