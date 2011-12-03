@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "node_struct.h"
@@ -6,7 +6,7 @@
 
 static struct key* find_predecessor_local(const identifier id, void* arg);
 static void init_node_data(struct node* n);
-static struct key* get_closest_preceding_finger_local(id, finder);
+static struct key* get_closest_preceding_finger_local(const identifier id, struct node* finder);
 
 struct key* get_node_successor(const struct node* n)
 {
@@ -29,12 +29,7 @@ struct key* find_predecessor(const identifier id, void* arg)
 	struct node* finder = (struct node*)arg;	
 
 	if ((finder->flag & NODE_FLAG_LOCAL) != 0)	
-	{
-		if (finder->data == NULL)
-			init_node_data(finder);
-
 		return find_predecessor_local(id, finder); 
-	}
 	else
 		return rpc_find_predecessor(id, arg);
 }
@@ -62,6 +57,9 @@ struct key* get_closest_preceding_finger(const identifier id, struct node* finde
 
 /*-------------- functions below only used in this file -------------------*/
 
+/*
+ * result will saved in finder->data
+ */
 static struct key* 
 get_closest_preceding_finger_local(const identifier id, struct node* finder)
 {
@@ -81,20 +79,30 @@ get_closest_preceding_finger_local(const identifier id, struct node* finder)
 		}
 	} // end of for
 
-	return ((struct node)finder->data)->node_key;
+	return ((struct node*)finder->data)->node_key;
 }
 
-static struct key* find_predecessor_local(const identifier id, void* arg);
+/*
+ * result saved in arg->data
+ */
+static struct key* find_predecessor_local(const identifier id, void* arg)
 {
 	struct node* node_in = (struct node*)arg;
-	struct node* node_tmp = node_in->data;
-	struct key* successor_tmp = node_in->successor;
+	struct node* node_tmp;
+	struct key* key_tmp = node_in->successor;
+
+	if (node_in->data == NULL)
+		init_node_data(node_in);
+	node_tmp = node_in->data;
 
 	memcpy(node_tmp->node_key, node_in->node_key, sizeof(struct key));
-	while (!identifier_is_between(id, node_tmp->node_key->id, successor_tmp->id, 0, 1))
-	{
-		get_closed_preceding_finger(id, node_in);
-		successor_tmp = get_node_successor(node_tmp);
+	while (!identifier_is_between(id, node_tmp->node_key->id, key_tmp->id, 0, 1))
+	{ 
+		key_tmp = get_closest_preceding_finger(id, node_tmp); // frist time node_tmp is local node but still use rpc function
+															  // this is unnecessary but fix it makes code ugly ~ ~. maybe i
+															  // will fix it with a better solution.
+		memcpy(node_tmp->node_key, key_tmp, sizeof(struct key));
+		key_tmp = get_node_successor(node_tmp);
 	} // end of while
 
 	return node_tmp->node_key;

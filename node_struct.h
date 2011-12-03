@@ -24,5 +24,6 @@ struct finger
 
 #define NODE_FLAG_LOCAL 0x00000001
 #define NODE_FLAG_JOINED 0x00000002
+#define NODE_FLAG_FINGER_NODE 0x00000004
 
 #endif
