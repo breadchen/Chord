@@ -7,7 +7,6 @@ struct node
 {
 	/* node identifier and address */
 	struct key* node_key;
-	int node_socket;
 	struct key* successor;
 	struct key* predecessor;
 	struct finger* finger_table;
@@ -19,7 +18,7 @@ struct finger
 {
 	identifier start;	
 	identifier end;
-	struct node finger_node;
+	struct key successor;
 };
 
 #define NODE_FLAG_LOCAL 0x00000001

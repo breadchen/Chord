@@ -17,6 +17,9 @@ struct key* rpc_set_successor(const struct node* node_remote, const struct key* 
 
 struct key* rpc_set_precedessor(const struct node* node_remote, const struct key* predecessor);
 
-struct key* rpc_send_successor(const struct node* node_remote);
+void rpc_update_finger_table(const struct key* key_remote, 
+		const struct key* finger_key, int i);
+
+//struct key* rpc_response(struct node* node_remote, int code);
 
 #endif

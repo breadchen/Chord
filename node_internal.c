@@ -65,12 +65,12 @@ get_closest_preceding_finger_local(const identifier id, struct node* finder)
 {
 	int counter = ID_BIT_LEN - 1;
 	struct finger* finger_t = finder->finger_table;
-	struct node* node_current;
+	struct key* key_current;
 
 	for (; counter >= 0; counter--)
 	{
-		node_current = &(finger_t[counter].finger_node);
-		if (identifier_is_between(node_current->node_key->id, 
+		key_current = &(finger_t[counter].successor);
+		if (identifier_is_between(key_current->id, 
 								  finder->node_key->id,
 								  id, 0, 0))
 		{
@@ -115,7 +115,6 @@ static void init_node_data(struct node* n)
 	n->data = malloc(sizeof(struct node));
 	n_tmp = (struct node*)n->data;
 	n_tmp->node_key = malloc(sizeof(struct key));
-	n_tmp->node_socket = -1;
 	n_tmp->successor = malloc(sizeof(struct key));
 	n_tmp->predecessor = malloc(sizeof(struct key));
 	n_tmp->finger_table = malloc(sizeof(struct finger));

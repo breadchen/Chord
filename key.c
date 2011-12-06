@@ -172,7 +172,7 @@ int key_is_between(const struct key* key_in,
 		default: break;
 	}
 	return result;
-	*/
+*/
 	return identifier_is_between(key_in->id, key_start->id, key_end->id, 
 			b_start, b_end);
 }
